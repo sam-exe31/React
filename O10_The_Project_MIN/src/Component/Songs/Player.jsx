@@ -3,33 +3,33 @@ import { Play, Pause, Volume2 } from 'lucide-react';
 
 
 function Player({ currentSong }) {
-  const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [volume, setVolume] = useState(1);
+    const audioRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [volume, setVolume] = useState(1);
 
-  // 2. Auto-play when a new song is selected
-  useEffect(() => {
+
+useEffect(() => {
     if (currentSong && audioRef.current) {
-      audioRef.current.play()
+    audioRef.current.play()
         .then(() => setIsPlaying(true))
         .catch(error => console.log("Audio play error:", error));
     }
-  }, [currentSong]);
+}, [currentSong]);
 
-  // 3. Play/Pause Logic
-  const togglePlay = () => {
+
+const togglePlay = () => {
     if (!currentSong) return;
     if (isPlaying) {
-      audioRef.current.pause();
+    audioRef.current.pause();
     } else {
-      audioRef.current.play();
+    audioRef.current.play();
     }
     setIsPlaying(!isPlaying);
-  };
+};
 
-  // 4. Update the progress bar as the song plays
-  const handleTimeUpdate = () => {
+
+const handleTimeUpdate = () => {
     if (audioRef.current) {
       const current = audioRef.current.currentTime;
       const total = audioRef.current.duration;
@@ -37,23 +37,20 @@ function Player({ currentSong }) {
     }
   };
 
-  // 5. Handle dragging the progress bar (seeking)
   const handleSeek = (e) => {
     const newTime = (e.target.value / 100) * audioRef.current.duration;
     audioRef.current.currentTime = newTime;
     setProgress(e.target.value);
   };
 
-  // 6. Handle volume slider
   const handleVolume = (e) => {
     const newVolume = e.target.value;
     audioRef.current.volume = newVolume;
     setVolume(newVolume);
   };
 
-  if (!currentSong) return null; // Hide if no song is selected
+  if (!currentSong) return null;
 
-  // 7. The Custom UI
   return (
     <div className="player-container" style={{
       position: 'fixed', bottom: 0, left: 0, width: '100%',
@@ -62,54 +59,53 @@ function Player({ currentSong }) {
       alignItems: 'center', color: 'white', zIndex: 1000, boxSizing: 'border-box'
     }}>
       
-      {/* THE INVISIBLE ENGINE */}
-      <audio 
+
+    <audio 
         ref={audioRef} 
         src={currentSong.url} 
         onTimeUpdate={handleTimeUpdate}
         onEnded={() => setIsPlaying(false)} // Pause icon shows when song finishes
-      />
+    />
 
       {/* Left Side: Song Info */}
-      <div style={{ width: '30%' }}>
+    <div style={{ width: '30%' }}>
         <h4 style={{ margin: 0, fontSize: '1rem' }}>{currentSong.title}</h4>
         <p style={{ margin: 0, color: '#b3b3b3', fontSize: '0.8rem' }}>{currentSong.artist}</p>
-      </div>
+    </div>
 
       {/* Middle Side: Playback Controls */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '40%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '40%' }}>
         <button 
-          onClick={togglePlay}
-          style={{
+        onClick={togglePlay}
+        style={{
             backgroundColor: 'white', color: 'black', border: 'none',
             borderRadius: '50%', width: '40px', height: '40px',
             cursor: 'pointer', marginBottom: '8px',
             display: 'flex', justifyContent: 'center', alignItems: 'center'
-          }}>
+        }}>
           {/* Using your new Lucide Icons! */}
-          {isPlaying ? <Pause size={20} fill="black" /> : <Play size={20} fill="black" />}
+        {isPlaying ? <Pause size={20} fill="black" /> : <Play size={20} fill="black" />}
         </button>
         
-        {/* Progress Bar */}
         <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-          <input 
+        <input 
             type="range" min="0" max="100" value={progress} onChange={handleSeek}
             style={{ width: '100%', cursor: 'pointer', accentColor: '#1db954' }}
-          />
+        />
         </div>
-      </div>
+    </div>
 
-      {/* Right Side: Volume Control */}
-      <div style={{ width: '30%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
+
+        <div style={{ width: '30%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px' }}>
         <Volume2 size={20} color="#b3b3b3" /> 
         <input 
-          type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolume}
-          style={{ width: '80px', cursor: 'pointer', accentColor: '#1db954' }}
+        type="range" min="0" max="1" step="0.01" value={volume} onChange={handleVolume}
+        style={{ width: '80px', cursor: 'pointer', accentColor: '#1db954' }}
         />
-      </div>
-      
     </div>
-  );
+    
+    </div>
+);
 }
 
 export default Player;
